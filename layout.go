@@ -253,7 +253,7 @@ func tableCols(n *Node) {
 	if nw > 0 {
 		for i, c := range n.Cols {
 			if c <= 0 {
-				n.Cols[i] = (aw / nw).Round()
+				n.Cols[i] = (aw / nw).RoundHalf()
 			}
 		}
 		aw = 0

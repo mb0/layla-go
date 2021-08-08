@@ -1,8 +1,6 @@
 package layla
 
 import (
-	"math"
-
 	"xelf.org/layla/font"
 	"xelf.org/layla/mark"
 )
@@ -13,31 +11,7 @@ const (
 	AlignCenter
 )
 
-// Dot a dot is the measurement used by layla and is defined as 1/8 mm or 1/203 inch.
-// We use the 200 dpi dot as default, because it easier to work with than mm or 300 dpi dots.
-// During layout we round to half dots so we do not loose, information relevant for 300 dpi
-// renders. Otherwise we round positions down and dimensions up as not to sqeeze and wrap text.
-type Dot float64
-
-// Mm converts dot into mm and returns it.
-func (dot Dot) Mm() float64 { return float64(dot / 8) }
-
-// Round rounds dots to half dots.
-func (dot Dot) Round() Dot { return Dot(math.Round(float64(dot*2) / 2)) }
-
-// Round up to full dots.
-func (dot Dot) Ceil() Dot { return Dot(math.Ceil(float64(dot))) }
-
-// Round down to full dots.
-func (dot Dot) Floor() Dot { return Dot(math.Floor(float64(dot))) }
-
-// At returns dot at a specific resolution in dots per inch.
-func (dot Dot) At(dpi int) int {
-	if dpi < 200 || dpi > 203 {
-		dot = dot * Dot(dpi) / 203
-	}
-	return int(math.Round(float64(dot)))
-}
+type Dot = font.Dot
 
 // Pos is a simple position consisting of x and y coordinates in dots.
 type Pos struct {
@@ -114,9 +88,9 @@ type NodeLayout struct {
 
 // Code holds all qr and barcode related node data
 type Code struct {
-	Name  string  `json:"name,omitempty"`
-	Human int     `json:"human,omitempty"`
-	Wide  float64 `json:"wide,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Human int    `json:"human,omitempty"`
+	Wide  Dot    `json:"wide,omitempty"`
 }
 
 type Color struct {

@@ -104,7 +104,7 @@ func (l *Layouter) lineHeight(f *Font) (lh Dot, _ error) {
 		f.Line = 1.2
 	}
 	if f.Line < 8 {
-		f.Line = (f.Line * Dot(l.PtToDot(f.Height))).Ceil()
+		f.Line = (f.Line * l.PtToDot(f.Height)).Ceil()
 	}
 	return f.Line, nil
 }
@@ -144,10 +144,10 @@ type span struct {
 }
 
 func (s *splitter) splitSpan(f *font.Face, txt string, mw Dot) (w Dot, _, rest string) {
-	res := Dot(f.Extra())
+	res := f.Extra()
 	last := rune(-1)
 	for i, r := range txt {
-		wr := Dot(f.Rune(r, last))
+		wr := f.Rune(r, last)
 		if i > 0 && res+wr > mw {
 			return res, txt[:i], txt[i:]
 		}
@@ -160,7 +160,7 @@ func (s *splitter) splitSpan(f *font.Face, txt string, mw Dot) (w Dot, _, rest s
 func (s *splitter) spanW(f *font.Face, txt string) Dot {
 	w, _ := f.Text(txt, -1)
 	w += f.Extra()
-	return Dot(w).Ceil()
+	return w.Ceil()
 }
 func (s *splitter) spans(f *font.Face, tag mark.Tag, cont string, res []line, cur line) ([]line, line) {
 	var space bool

@@ -16,10 +16,11 @@ type Key struct {
 type Src struct {
 	*truetype.Font
 	Path string
+	Name string
 }
 
 type Manager struct {
-	dpi   float64
+	dpi   int
 	subx  int
 	suby  int
 	ttfs  map[string]*Src
@@ -28,10 +29,10 @@ type Manager struct {
 }
 
 func NewManager(dpi, subx, suby int) *Manager {
-	return &Manager{dpi: float64(dpi), subx: subx, suby: suby}
+	return &Manager{dpi: dpi, subx: subx, suby: suby}
 }
 
-func (m *Manager) DPI() float64 {
+func (m *Manager) DPI() int {
 	if m.dpi <= 0 {
 		return 72
 	}
@@ -48,8 +49,8 @@ func (m *Manager) SubPixels() (x, y int) {
 	return x, y
 }
 
-func (m *Manager) DotToPt(dot float64) Pt { return PtF(dot * m.DPI() / (25.4 * 8)) }
-func (m *Manager) PtToDot(pt Pt) float64  { return PtToF(pt) * 25.4 * 8 / m.DPI() }
+func (m *Manager) DotToPt(dot Dot) Pt { return PtF(float64(dot * Dot(m.DPI()) / (25.4 * 8))) }
+func (m *Manager) PtToDot(pt Pt) Dot  { return Dot(PtToF(pt)*25.4*8) / Dot(m.DPI()) }
 
 func (m *Manager) Err() error           { return m.err }
 func (m *Manager) fail(err error) error { m.err = err; return err }
@@ -75,7 +76,7 @@ func (m *Manager) RegisterTTF(name string, path string) *Manager {
 	if m.ttfs == nil {
 		m.ttfs = make(map[string]*Src)
 	}
-	m.ttfs[name] = &Src{f, path}
+	m.ttfs[name] = &Src{f, path, name}
 	return m
 }
 
@@ -103,7 +104,7 @@ func (m *Manager) Face(name string, size float64) (font.Face, error) {
 	subx, suby := m.SubPixels()
 	f = truetype.NewFace(src.Font, &truetype.Options{
 		Size:       size,
-		DPI:        m.DPI(),
+		DPI:        float64(m.DPI()),
 		SubPixelsX: subx,
 		SubPixelsY: suby,
 	})
