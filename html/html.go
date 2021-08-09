@@ -27,13 +27,19 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 	}
 	b.WriteString(`<style>
 @font-face {
-	font-family: 'regular';
+	font-family: 'GoReg.ttf';
 	src: url('font/Go-Regular.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'GoBold.ttf';
+	src: url('font/Go-Bold.ttf') format('truetype');
 }
 .layla {
 	position: relative;
 	background-color: white;
 	margin: 10mm;
+	text-rendering: optimizeSpeed;
+	font-kerning: normal;
 }
 .layla * {
 	position: absolute;
@@ -53,6 +59,9 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 		b.WriteString(`<div style="`)
 		switch d.Kind {
 		case "ellipse":
+			box := d.Box
+			box.X -= d.Border.W
+			box.Y -= d.Border.W
 			writeBox(b, d.Box)
 			fmt.Fprintf(b, "border:%gmm solid black;", d.Border.W/8)
 			b.WriteString(`border-radius: 50%">`)
@@ -66,24 +75,28 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 			} else {
 				hyp := font.Dot(math.Sqrt(float64(d.W*d.W + d.H*d.H)))
 				deg := math.Asin(float64(d.H/hyp)) * 180 / math.Pi
-				writeBox(b, layla.Box{d.Pos, layla.Dim{hyp.Ceil(), 0}})
+				writeBox(b, layla.Box{Pos: d.Pos, Dim: layla.Dim{W: hyp.Ceil(), H: 0}})
 				fmt.Fprintf(b, "border-top:%gmm solid black;", d.Border.W/8)
 				fmt.Fprintf(b, "transform:rotate(%gdeg);", math.Round(deg*10)/10)
 				b.WriteString(`transform-origin:top left;`)
 			}
 			b.WriteString(`">`)
 		case "rect":
-			writeBox(b, d.Box)
+			box := d.Box
+			box.X -= d.Border.W
+			box.Y -= d.Border.W
+			writeBox(b, box)
 			fmt.Fprintf(b, "border:%gmm solid black;", d.Border.W/8)
 			b.WriteString(`">`)
 		case "text":
-			fmt.Fprintf(b, "left:%gmm;", (d.X-2)/8)
-			fmt.Fprintf(b, "top:%gmm;", d.Y/8)
-			fmt.Fprintf(b, "width:%gmm;", (d.W+4)/8)
+			off := font.Dot(d.Font.Size * .55)
+			fmt.Fprintf(b, "left:%gmm;", (d.X-1)/8)
+			fmt.Fprintf(b, "top:%gmm;", (d.Y-off)/8)
+			fmt.Fprintf(b, "width:%gmm;", d.W/8)
 			fmt.Fprintf(b, "height:%gmm;", d.H/8)
-			fmt.Fprintf(b, "font-family: %s;", d.Font.Name)
-			fmt.Fprintf(b, "font-size: %gpt;", d.Font.Size)
-			fmt.Fprintf(b, "line-height: %gmm;", d.Font.Line/8)
+			fmt.Fprintf(b, "font-family:'%s';", d.Font.Name)
+			fmt.Fprintf(b, "font-size:%gpt;", d.Font.Size*.96)
+			fmt.Fprintf(b, "line-height:%gmm;", d.Font.Line/8)
 			if d.Font.Style&mark.Bold != 0 {
 				fmt.Fprintf(b, "font-weight:bold;")
 			}
@@ -92,9 +105,9 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 			}
 			switch d.Align {
 			case 1:
-				fmt.Fprintf(b, "text-align: right;")
+				fmt.Fprintf(b, "text-align:right;")
 			case 2:
-				fmt.Fprintf(b, "text-align: center;")
+				fmt.Fprintf(b, "text-align:center;")
 			}
 			b.WriteString(`">`)
 			b.WriteString(strings.ReplaceAll(d.Data, "\n", "<br>\n"))
