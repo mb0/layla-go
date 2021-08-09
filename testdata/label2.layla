@@ -1,0 +1,17 @@
+(stage w:360 h:360 align:2 gap:30 font:['GoReg.ttf' 7] pad:[30 40 30 0]
+	(vbox align:2
+		(text font.size:12 $title)
+		(text mar:[12 0 0 6] h:76 "Zutaten: " $ingreds)
+		(text 'Verpackt am: ' (fmt_date $now))
+		(text 'ungeöffnet haltbar: ' (fmt_date (add_days $now 90)))
+		(text 'Hergestellt für: ' $vendor)
+		(text 'Straße Nr, PLZ Ort')
+		(ellipse w:100 h:66 border:[2]
+			(vbox y:9 font.size:5 align:2
+				(text 'CO')
+				(text 'DEcodeCO')
+				(text 'DE')
+			)
+		)
+	)
+)

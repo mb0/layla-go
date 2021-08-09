@@ -1,0 +1,26 @@
+(stage w:744 h:432 gap:24 font:['GoReg.ttf' 7] pad:[36 150 36 0]
+	(rect   x:0 y:0 w:40 h:240 border.w:2)
+	(rect  x:80 y:0 w:40 h:240 border.w:2)
+	(rect x:160 y:0 w:40 h:240 border.w:2)
+	(rect x:240 y:0 w:40 h:240 border.w:2)
+	(rect x:320 y:0 w:40 h:240 border.w:2)
+	(rect x:400 y:0 w:40 h:240 border.w:2)
+	(rect x:480 y:0 w:40 h:240 border.w:2)
+	(rect x:560 y:0 w:40 h:240 border.w:2)
+	(rect x:640 y:0 w:40 h:240 border.w:2)
+	(vbox
+		(text font.size:12 'Titel')
+		(text mar:[0 0 0 6] h:76 "Zutaten: Allerlei zutaten")
+		(text 'Verpackt am: ' (fmt_date $now))
+		(text 'ungeöffnet haltbar: ' (fmt_date (add_days $now 90)))
+		(text 'Hergestellt für: Beef & Basics GmbH')
+		(text 'Straße Nr, PLZ Ort')
+		(ellipse x:30 w:100 h:66 border:[2]
+			(vbox y:9 font.size:5 align:2
+				(text 'CO')
+				(text 'DEcodeCO')
+				(text 'DE')
+			)
+		)
+	)
+)

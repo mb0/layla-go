@@ -1,0 +1,40 @@
+(page w:1680 h:2328 font:{name:'GoReg.ttf' size:10}
+	(extra x:40
+		(() fold marks)
+		(line y:696  w:24 border:[0.8])
+		(line y:1536 w:24 border:[0.8])
+		(() half mark)
+		(line y:1188 w:40 border:[1.6])
+	)
+	(cover 
+		(() address box)
+		(vbox x:200 y:240 w:640 h:336 
+			(text h:40 font.size:8 'My Company - Street No. 7 - 12345 City')
+			(text font:{size:12 line:1.5}
+				'Customer Name\nCustomer Addr1\nAddr2\n23456 Other City')
+		)
+		(() details)
+		(table x:964 y:608 sub.h:48 font.size:9 cols:[240 240]
+			(text 'Page') (text 'µP/µT')
+			(text 'Date') (text '2019-09-16')
+		)
+		(() title)
+		(text x:200 y:752 font:{name:'GoBold.ttf' line:1.5} mar.b:32 'Title\ntest')
+	)
+	(header mar:[0 160 0 40]
+		(table x:964 sub.h:48 font.size:9 cols:[240 240]
+			(text 'Page') (text 'µP/µT')
+			(text 'Date') (text '2019-09-16')
+		)
+	)
+	(footer mar:[200 40 120 160] (vbox list:(range 4 (fn i:int
+		(text 'Footer with company contact, legal and bank information')
+	))))
+	(() body)
+	(vbox pad:[200 0 120 0]
+		(vbox list:(range 4 (fn (text font.size:(mul (1 _) 10) 'Hello World'))))
+		(vbox list:(range 20 (fn i:int
+		(text font.line:1.5 `Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.  Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`)
+		)))
+	)
+)

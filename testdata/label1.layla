@@ -1,0 +1,16 @@
+(stage w:464 h:480 gap:32 font:{name:'GoReg.ttf' size:8} pad:[32 32 0 0]
+	(vbox w:300 sub.h:72
+		(box (text 'Produkt:')
+			(text y:24 font.size:10 $title))
+		(box (text 'Anbieter:')
+			(text y:24 font.size:10 $vendor))
+		(box (text 'Batch:')
+			(text y:24 font.size:10 $batch))
+		(box (text 'Datum:')
+			(text y:24 font.size:10 (fmt_date $now)))
+	)
+	(qrcode x:300 y:166 code:['H' 0 4]
+		'https://vendor.url/' $batch)
+	(barcode x:9 y:320 h:124.4 code:['ean128' 2 1]
+		'10' $batch)
+)
