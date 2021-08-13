@@ -19,7 +19,7 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node, extra ...string) err
 		return err
 	}
 	w, h := n.W, n.H
-	if n.Rot == 90 {
+	if n.Rot == 90 || n.Rot == -90 || n.Rot == 270 {
 		w, h = h, w
 	}
 	fmt.Fprintf(b, "SIZE %g mm, %g mm\n", w/8, h/8)
@@ -33,7 +33,7 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node, extra ...string) err
 	}
 	b.WriteString("CLS\n")
 	for _, d := range draw {
-		err = renderNode(lay, b, d, n.Rot, n.H)
+		err = renderNode(lay, b, d, n.Rot, n.W, n.H)
 		if err != nil {
 			return err
 		}
@@ -41,14 +41,24 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node, extra ...string) err
 	return nil
 }
 
-func renderNode(lay *layla.Layouter, b bfr.Writer, d *layla.Node, rot int, rh layla.Dot) error {
-	if rot != 0 {
+func renderNode(lay *layla.Layouter, b bfr.Writer, d *layla.Node, rot int, rw, rh layla.Dot) error {
+	switch rot {
+	case 90:
 		switch d.Kind {
 		case "rect", "line", "ellipse":
 			d.X, d.Y = rh-d.Y-d.H, d.X
 			d.W, d.H = d.H, d.W
 		case "text", "barcode", "qrcode":
 			d.X, d.Y = rh-d.Y, d.X
+		}
+	case -90, 270:
+		rot = 270
+		switch d.Kind {
+		case "rect", "line", "ellipse":
+			d.X, d.Y = d.Y, rw-d.X-d.H
+			d.W, d.H = d.H, d.W
+		case "text", "barcode", "qrcode":
+			d.X, d.Y = d.Y-d.H, rw-d.X
 		}
 	}
 	dpi := lay.DPI()
