@@ -59,43 +59,46 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 		b.WriteString(`<div style="`)
 		switch d.Kind {
 		case "ellipse":
-			box := d.Box
-			box.X -= d.Border.W
-			box.Y -= d.Border.W
-			writeBox(b, d.Box)
+			writeBox(b, d.Box, d.Border.W)
 			fmt.Fprintf(b, "border:%gmm solid black;", d.Border.W/8)
 			b.WriteString(`border-radius: 50%">`)
 		case "line":
 			if d.W == 0 {
-				writeBox(b, d.Box)
+				writeBox(b, d.Box, d.Border.W)
 				fmt.Fprintf(b, "border-left:%gmm solid black;", d.Border.W/8)
 			} else if d.H == 0 {
-				writeBox(b, d.Box)
+				writeBox(b, d.Box, d.Border.W)
 				fmt.Fprintf(b, "border-top:%gmm solid black;", d.Border.W/8)
 			} else {
 				hyp := font.Dot(math.Sqrt(float64(d.W*d.W + d.H*d.H)))
 				deg := math.Asin(float64(d.H/hyp)) * 180 / math.Pi
-				writeBox(b, layla.Box{Pos: d.Pos, Dim: layla.Dim{W: hyp.Ceil(), H: 0}})
+				pos := layla.Pos{d.X + d.Border.W*.25, d.Y - d.Border.W*.5}
+				if deg < 0 {
+					pos = layla.Pos{d.X - d.Border.W*.25, d.Y}
+				}
+				writeBox(b, layla.Box{pos, layla.Dim{hyp.Round(), 0}}, 0)
 				fmt.Fprintf(b, "border-top:%gmm solid black;", d.Border.W/8)
 				fmt.Fprintf(b, "transform:rotate(%gdeg);", math.Round(deg*10)/10)
 				b.WriteString(`transform-origin:top left;`)
 			}
 			b.WriteString(`">`)
 		case "rect":
-			box := d.Box
-			box.X -= d.Border.W
-			box.Y -= d.Border.W
-			writeBox(b, box)
+			writeBox(b, d.Box, d.Border.W)
 			fmt.Fprintf(b, "border:%gmm solid black;", d.Border.W/8)
 			b.WriteString(`">`)
 		case "text":
-			off := font.Dot(d.Font.Size * .55)
+			y, fsize := d.Y, d.Font.Size
+			if man.Gompat { // tspl render compatibility mode
+				// for some reason these parameters fit tspl label printer text rendering
+				y -= font.Dot(fsize * .55)
+				fsize *= .96
+			}
 			fmt.Fprintf(b, "left:%gmm;", (d.X-1)/8)
-			fmt.Fprintf(b, "top:%gmm;", (d.Y-off)/8)
+			fmt.Fprintf(b, "top:%gmm;", y/8)
 			fmt.Fprintf(b, "width:%gmm;", d.W/8)
 			fmt.Fprintf(b, "height:%gmm;", d.H/8)
 			fmt.Fprintf(b, "font-family:'%s';", d.Font.Name)
-			fmt.Fprintf(b, "font-size:%gpt;", d.Font.Size*.96)
+			fmt.Fprintf(b, "font-size:%gpt;", fsize)
 			fmt.Fprintf(b, "line-height:%gmm;", d.Font.Line/8)
 			if d.Font.Style&mark.Bold != 0 {
 				fmt.Fprintf(b, "font-weight:bold;")
@@ -112,7 +115,7 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 			b.WriteString(`">`)
 			b.WriteString(strings.ReplaceAll(d.Data, "\n", "<br>\n"))
 		case "barcode", "qrcode":
-			writeBox(b, d.Box)
+			writeBox(b, d.Box, 0)
 			b.WriteString(`">`)
 			err = writeBarcode(b, d)
 			if err != nil {
@@ -124,11 +127,11 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 	b.WriteString(`</div>`)
 	return nil
 }
-func writeBox(b bfr.Writer, d layla.Box) {
-	fmt.Fprintf(b, "left:%gmm;", d.X/8)
-	fmt.Fprintf(b, "top:%gmm;", d.Y/8)
-	fmt.Fprintf(b, "width:%gmm;", d.W/8)
-	fmt.Fprintf(b, "height:%gmm;", d.H/8)
+func writeBox(b bfr.Writer, d layla.Box, border layla.Dot) {
+	fmt.Fprintf(b, "left:%gmm;", (d.X-border*.5)/8)
+	fmt.Fprintf(b, "top:%gmm;", (d.Y-border*.5)/8)
+	fmt.Fprintf(b, "width:%gmm;", (d.W+border)/8)
+	fmt.Fprintf(b, "height:%gmm;", (d.H+border)/8)
 }
 
 func writeBarcode(b bfr.Writer, d *layla.Node) error {

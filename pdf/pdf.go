@@ -24,6 +24,7 @@ func NewDoc(n *layla.Node) *Doc {
 		UnitStr: "mm",
 		Size:    gofpdf.SizeType{float64(n.W / 8), float64(n.H / 8)},
 	})
+	doc.SetLineJoinStyle("bevel")
 	doc.SetAutoPageBreak(false, 0)
 	return doc
 }
@@ -124,20 +125,20 @@ func drawBorder(d *Doc, b layla.Box, br layla.Border, c *layla.Color) {
 	x1, y1 := float64(b.X/8), float64(b.Y/8)
 	x2, y2 := float64((b.X+b.W)/8), float64((b.Y+b.H)/8)
 	if br.L > 0 {
-		bw := setupBorder(d, br.L, c) / 2
-		d.Line(x1+bw, y1, x1+bw, y2)
+		setupBorder(d, br.L, c)
+		d.Line(x1, y1, x1, y2)
 	}
 	if br.T > 0 {
-		bw := setupBorder(d, br.T, c) / 2
-		d.Line(x1, y1+bw, x2, y1+bw)
+		setupBorder(d, br.T, c)
+		d.Line(x1, y1, x2, y1)
 	}
 	if br.R > 0 {
-		bw := setupBorder(d, br.R, c) / 2
-		d.Line(x2-bw, y1, x2-bw, y2)
+		setupBorder(d, br.R, c)
+		d.Line(x2, y1, x2, y2)
 	}
 	if br.B > 0 {
-		bw := setupBorder(d, br.B, c) / 2
-		d.Line(x1, y2-bw, x2, y2-bw)
+		setupBorder(d, br.B, c)
+		d.Line(x1, y2, x2, y2)
 	}
 }
 
@@ -156,31 +157,37 @@ func (r Renderer) renderNode(d *Doc, n *layla.Node) error {
 		d.Line(x, y, x+float64(n.W/8), y+float64(n.H/8))
 	case "rect":
 		b := n.Border.Default(1.6)
-		box := n.Box
-		box.X -= b.W
-		box.Y -= b.W
-		drawBorder(d, box, b, nil)
+		drawBorder(d, n.Box, b, nil)
 	case "text":
 		br := n.Border.Default(0)
 		drawBorder(d, n.Box, br, nil)
 
-		fsize := n.Font.Size
-		d.SetFont(n.Font.Name, "", fsize*.96)
+		y, fsize := n.Y, n.Font.Size
+		if r.Gompat { // tspl render compatibility mode
+			// for some reason these parameters fit tspl label printer text rendering
+			y -= font.Dot(fsize * .75)
+			fsize *= .96
+		}
+		d.SetFont(n.Font.Name, "", fsize)
 		b := n.Pad.Inset(n.Box)
 		res, err := enc(n.Data)
 		if err != nil {
 			return err
 		}
-		off := font.Dot(fsize * 6 / 8)
-		y := b.Y - off
-		x, w, align := b.X-9, b.W+18, ""
+		x, w, align := b.X, b.W, ""
 		switch n.Align {
 		case layla.AlignRight:
 			align = "RB"
+			x -= 27
+			w += 18
 		case layla.AlignCenter:
 			align = "CB"
+			x -= 9
+			w += 18
 		default:
 			align = "LB"
+			x -= 9
+			w += 18
 		}
 		d.SetXY(float64(x/8), float64(y/8))
 		d.MultiCell(float64(w/8), float64(n.Font.Line/8), res, "", align, false)

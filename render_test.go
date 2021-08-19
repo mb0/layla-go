@@ -25,6 +25,8 @@ func man() *font.Manager {
 	if err := m.Err(); err != nil {
 		log.Fatal(err)
 	}
+	// enabled tspl text rendering compatibility mode
+	m.Gompat = true
 	return m
 }
 

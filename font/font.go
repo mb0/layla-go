@@ -20,12 +20,13 @@ type Src struct {
 }
 
 type Manager struct {
-	dpi   int
-	subx  int
-	suby  int
-	ttfs  map[string]*Src
-	faces map[Key]font.Face
-	err   error
+	Gompat bool
+	dpi    int
+	subx   int
+	suby   int
+	ttfs   map[string]*Src
+	faces  map[Key]font.Face
+	err    error
 }
 
 func NewManager(dpi, subx, suby int) *Manager {
