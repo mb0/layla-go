@@ -71,7 +71,7 @@ func (f *Face) Rune(r, last rune) Dot {
 	}
 	a, ok := f.GlyphAdvance(r)
 	if !ok {
-		a, _ = f.GlyphAdvance('x')
+		a, _ = f.GlyphAdvance('X')
 	}
 	res += a
 	d := f.PtToDot(res)

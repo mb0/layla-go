@@ -30,7 +30,7 @@ func FakeBoldStyler(m *font.Manager, f Font, t mark.Tag) (*font.Face, error) {
 }
 
 func LayoutAndPage(m *font.Manager, n *Node) ([]*Node, error) {
-	l := &Layouter{m, 'm', ZeroStyler}
+	l := &Layouter{m, 'X', ZeroStyler}
 	return l.LayoutAndPage(n)
 }
 
