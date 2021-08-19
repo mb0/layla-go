@@ -26,7 +26,7 @@ func man() *font.Manager {
 		log.Fatal(err)
 	}
 	// enabled tspl text rendering compatibility mode
-	m.Gompat = true
+	m.Compat = true
 	return m
 }
 

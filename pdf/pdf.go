@@ -163,7 +163,7 @@ func (r Renderer) renderNode(d *Doc, n *layla.Node) error {
 		drawBorder(d, n.Box, br, nil)
 
 		y, fsize := n.Y, n.Font.Size
-		if r.Gompat { // tspl render compatibility mode
+		if r.Compat { // tspl render compatibility mode
 			// for some reason these parameters fit tspl label printer text rendering
 			y -= font.Dot(fsize * .75)
 			fsize *= .96

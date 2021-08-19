@@ -88,7 +88,7 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 			b.WriteString(`">`)
 		case "text":
 			y, fsize := d.Y, d.Font.Size
-			if man.Gompat { // tspl render compatibility mode
+			if man.Compat { // tspl render compatibility mode
 				// for some reason these parameters fit tspl label printer text rendering
 				y -= font.Dot(fsize * .55)
 				fsize *= .96

@@ -20,7 +20,7 @@ type Src struct {
 }
 
 type Manager struct {
-	Gompat bool
+	Compat bool
 	dpi    int
 	subx   int
 	suby   int
