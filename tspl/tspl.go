@@ -82,7 +82,7 @@ func renderNode(lay *layla.Layouter, b bfr.Writer, d *layla.Node, rot int, rw, r
 		}
 		fsize := fontSize(d)
 		data := strings.Replace(fmt.Sprintf("%q", d.Data), "\\n", "\\[L]", -1)
-		space := (d.Font.Line - lay.PtToDot(d.Font.Height)).Ceil()
+		space := (d.Font.Line - lay.PtToDot(d.Font.Height).Ceil()).Floor()
 		x, w := d.X.At(dpi), d.W.At(dpi)
 		// TODO fix overflow due to discrepancy between font measuring and printing
 		// the reason might be that the tsc printer does not apply kerning?
