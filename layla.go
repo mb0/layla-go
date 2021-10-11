@@ -123,6 +123,7 @@ func (b Border) Default(w Dot) Border {
 type Table struct {
 	Cols []Dot `json:"cols,omitempty"`
 	Head bool  `json:"head,omitempty"`
+	Nobr bool  `json:"nobr,omitempty"`
 }
 
 // Node is a part of the display tree and can represent any element.

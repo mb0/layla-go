@@ -48,6 +48,7 @@ type page struct {
 
 func collectCopy(n *Node) *Node {
 	d := &Node{Kind: n.Kind, Box: n.Calc, Border: n.Border}
+	d.Pad = n.Pad
 	switch n.Kind {
 	case "text":
 		d.Font = n.Font
@@ -152,6 +153,9 @@ func (p *pager) collect(n *Node) error {
 		p.draw(collectCopy(n), n.Mar)
 		return p.collectAll(n.List)
 	case "table":
+		if p.Kind == "page" && n.Nobr && !p.fits(n) {
+			p.newPage(n.Calc.Y)
+		}
 		hh := n.Head && len(p.THead) == 0
 		if hh {
 			head := n.List
@@ -180,6 +184,18 @@ func (p *pager) collectAll(ns []*Node) (err error) {
 		}
 	}
 	return nil
+}
+func (p *pager) fits(n *Node) bool {
+	// check if case fits into the remaining space
+	for i := len(p.list) - 1; i >= 0; i-- {
+		x := p.list[i]
+		if x.Org > n.Calc.Y {
+			continue
+		}
+		y := n.Calc.Y - x.Org
+		return y+n.Calc.H <= x.H
+	}
+	return false
 }
 
 func (p *pager) draw(n *Node, m *Off) {
@@ -218,7 +234,11 @@ func (p *pager) draw(n *Node, m *Off) {
 				if lc > 0 {
 					nn := *n
 					nn.Y = x.Y + y
-					nn.H = (lh * Dot(lc)).Ceil()
+					var padh Dot
+					if nn.Pad != nil {
+						padh = nn.Pad.T + nn.Pad.B
+					}
+					nn.H = (lh*Dot(lc) + padh).Ceil()
 					hh += nn.H
 					nn.Data = strings.Join(txt[:lc], "\n")
 					x.res = append(x.res, &nn)
