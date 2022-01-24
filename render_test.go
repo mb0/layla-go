@@ -42,7 +42,7 @@ var testFiles = []string{
 func TestHtml(t *testing.T) {
 	m := man()
 	for _, name := range testFiles {
-		n, err := read(name)
+		n, err := read(exp.BG, name)
 		if err != nil {
 			t.Errorf("error reading test file %q: %v", name, err)
 			continue
@@ -65,7 +65,7 @@ func TestHtml(t *testing.T) {
 func TestPdf(t *testing.T) {
 	m := man()
 	for _, name := range testFiles {
-		n, err := read(name)
+		n, err := read(exp.BG, name)
 		if err != nil {
 			t.Errorf("error reading test file %q: %v", name, err)
 			continue
@@ -82,7 +82,7 @@ func TestPdf(t *testing.T) {
 	}
 }
 
-func read(name string) (*layla.Node, error) {
+func read(ctx exp.Ctx, name string) (*layla.Node, error) {
 	f, err := os.Open(path(name, ".layla"))
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func read(name string) (*layla.Node, error) {
 	}}
 	reg := &lit.Reg{}
 	env := exp.Builtins(layla.Specs(reg).AddMap(extlib.Std))
-	return layla.Eval(reg, &exp.ArgEnv{Par: env, Typ: param.Type(), Val: param}, f, name+".layla")
+	return layla.Eval(ctx, reg, &exp.ArgEnv{Par: env, Typ: param.Type(), Val: param}, f, name+".layla")
 }
 
 func path(name, ext string) string {

@@ -8,5 +8,5 @@ require (
 	github.com/jung-kurt/gofpdf v1.16.2
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
 	golang.org/x/text v0.3.6
-	xelf.org/xelf v0.0.0-20210809164751-b704d99e87a2
+	xelf.org/xelf v0.0.0-20220124025046-7dcb125dd8ae
 )
