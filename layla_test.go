@@ -87,7 +87,7 @@ func TestLayla(t *testing.T) {
 	reg := &lit.Reg{}
 	env := exp.Builtins(Specs(reg).AddMap(lib.Std))
 	for _, test := range tests {
-		n, err := Eval(exp.BG, reg, env, strings.NewReader(test.raw), "")
+		n, err := Eval(nil, reg, env, strings.NewReader(test.raw), "")
 		if err != nil {
 			t.Errorf("exec %s error: %v", test.raw, err)
 		}
@@ -134,7 +134,7 @@ func TestMeasure(t *testing.T) {
 	reg := &lit.Reg{}
 	env := exp.Builtins(Specs(reg).AddMap(lib.Std))
 	for _, test := range tests {
-		n, err := Eval(exp.BG, reg, env, strings.NewReader(test.raw), "")
+		n, err := Eval(nil, reg, env, strings.NewReader(test.raw), "")
 		if err != nil {
 			t.Errorf("exec %s error: %+v", test.raw, err)
 			continue

@@ -21,5 +21,5 @@ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.6 h1:aRYxNxv6iGQlyVaZmk6ZgYEDa+Jg18DxebPSrd6bg1M=
 golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
 golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
-xelf.org/xelf v0.0.0-20220124025046-7dcb125dd8ae h1:Ml7Wg8sv2P1L4+8f1xWFNbJyx+NwjpvEqyZ7zCDdHr0=
-xelf.org/xelf v0.0.0-20220124025046-7dcb125dd8ae/go.mod h1:bm1EiA9l29A9LLR52rFbxjDjFcW+60JU0UOQn+Tm9EA=
+xelf.org/xelf v0.0.0-20220126024223-0139d0cd0171 h1:ZFGDq6lqAWiRyWYUAisqv3hzD4Su+QplHubFCBkDHgM=
+xelf.org/xelf v0.0.0-20220126024223-0139d0cd0171/go.mod h1:bm1EiA9l29A9LLR52rFbxjDjFcW+60JU0UOQn+Tm9EA=

@@ -1,6 +1,7 @@
 package layla
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -11,7 +12,7 @@ import (
 )
 
 // Eval parses and evaluates the label from reader r and returns a node or an error.
-func Eval(ctx exp.Ctx, reg *lit.Reg, env exp.Env, rr io.Reader, name string) (*Node, error) {
+func Eval(ctx context.Context, reg *lit.Reg, env exp.Env, rr io.Reader, name string) (*Node, error) {
 	x, err := exp.Read(reg, rr, name)
 	if err != nil {
 		return nil, err

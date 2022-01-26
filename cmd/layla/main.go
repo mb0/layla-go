@@ -82,7 +82,7 @@ func main() {
 		log.Fatal("read tmpl: ", err)
 	}
 	env := &exp.ArgEnv{Par: exp.Builtins(layla.Specs(reg).AddMap(extlib.Std)), Typ: typ.Dict, Val: &argmap}
-	node, err := layla.Eval(exp.BG, reg, env, bytes.NewReader(tb), tmpl)
+	node, err := layla.Eval(nil, reg, env, bytes.NewReader(tb), tmpl)
 	if err != nil {
 		log.Fatal("exec tmpl: ", err)
 	}
