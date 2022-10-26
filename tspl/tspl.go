@@ -72,7 +72,7 @@ func renderNode(lay *layla.Layouter, b bfr.Writer, d *layla.Node, rot int, rw, r
 		fmt.Fprintf(b, "BOX %d,%d,%d,%d,%d\n",
 			d.X.At(dpi)-w, d.Y.At(dpi)-w, (d.X + d.W).At(dpi), (d.Y + d.H).At(dpi), w)
 	case "line":
-		fmt.Fprintf(b, "LINE %d,%d,%d,%d,%d\n",
+		fmt.Fprintf(b, "DIAGONAL %d,%d,%d,%d,%d\n",
 			d.X.At(dpi), d.Y.At(dpi), (d.X + d.W).At(dpi), (d.Y + d.H).At(dpi),
 			d.Border.W.At(dpi))
 	case "text":
