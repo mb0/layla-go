@@ -2,6 +2,7 @@ package layla_test
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -88,17 +89,29 @@ func read(name string) (*layla.Node, error) {
 		return nil, err
 	}
 	defer f.Close()
+	reg := &lit.Reg{}
+	x, err := exp.Read(reg, f, name+".layla")
+	if err != nil {
+		return nil, err
+	}
 	now := time.Date(2019, time.October, 5, 23, 0, 0, 0, time.UTC)
-	param := &lit.Dict{Keyed: []lit.KeyVal{
+	param := &lit.Keyed{
 		{"now", lit.Time(now)},
 		{"title", lit.Str("Produkt")},
 		{"vendor", lit.Str("Firma GmbH")},
 		{"batch", lit.Str("AB19020501")},
 		{"ingreds", lit.Str("list of all the ingredients, like suger and spice and everthing nice.")},
-	}}
-	reg := &lit.Reg{}
+	}
 	env := exp.Builtins(layla.Specs(reg).AddMap(extlib.Std))
-	return layla.Eval(nil, reg, &exp.ArgEnv{Par: env, Typ: param.Type(), Val: param}, f, name+".layla")
+	r, err := exp.NewProg(nil, reg, env).Run(x, exp.LitVal(param))
+	if err != nil {
+		return nil, err
+	}
+	n := layla.ValNode(r.Val)
+	if n == nil {
+		return nil, fmt.Errorf("expected *layla.Node got %T", r)
+	}
+	return n, nil
 }
 
 func path(name, ext string) string {

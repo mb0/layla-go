@@ -17,7 +17,7 @@ func Eval(ctx context.Context, reg *lit.Reg, env exp.Env, rr io.Reader, name str
 	if err != nil {
 		return nil, err
 	}
-	r, err := exp.EvalExp(ctx, reg, env, x)
+	r, err := exp.NewProg(ctx, reg, env).Run(x, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -20,7 +20,6 @@ import (
 	"xelf.org/xelf/exp"
 	"xelf.org/xelf/lib/extlib"
 	"xelf.org/xelf/lit"
-	"xelf.org/xelf/typ"
 )
 
 var rend = flag.String("rend", "tspl", "renderer")
@@ -81,9 +80,17 @@ func main() {
 	if err != nil {
 		log.Fatal("read tmpl: ", err)
 	}
-	env := &exp.ArgEnv{Par: exp.Builtins(layla.Specs(reg).AddMap(extlib.Std)), Typ: typ.Dict, Val: &argmap}
-	node, err := layla.Eval(nil, reg, env, bytes.NewReader(tb), tmpl)
+	x, err := exp.Read(reg, bytes.NewReader(tb), tmpl)
 	if err != nil {
+		log.Fatal("parse tmpl: ", err)
+	}
+	env := exp.Builtins(layla.Specs(reg).AddMap(extlib.Std))
+	r, err := exp.NewProg(nil, reg, env).Run(x, exp.LitVal(&argmap))
+	if err != nil {
+		log.Fatal("run tmpl: ", err)
+	}
+	node := layla.ValNode(r.Val)
+	if node == nil {
 		log.Fatal("exec tmpl: ", err)
 	}
 	name := filepath.Base(tmpl)
