@@ -52,7 +52,6 @@ func main() {
 	if err := man.Err(); err != nil {
 		log.Fatal("read font: ", err)
 	}
-	reg := &lit.Reg{}
 	var argmap lit.Dict
 	argmap.SetKey("now", lit.Time(time.Now()))
 	for _, arg := range args[1:] {
@@ -60,7 +59,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("read ctx: %v", err)
 		}
-		ctx, err := lit.Read(reg, bytes.NewReader(cb), arg)
+		ctx, err := lit.Read(bytes.NewReader(cb), arg)
 		if err != nil {
 			log.Fatalf("parse ctx: %v", err)
 		}
@@ -80,10 +79,11 @@ func main() {
 	if err != nil {
 		log.Fatal("read tmpl: ", err)
 	}
-	x, err := exp.Read(reg, bytes.NewReader(tb), tmpl)
+	x, err := exp.Read(bytes.NewReader(tb), tmpl)
 	if err != nil {
 		log.Fatal("parse tmpl: ", err)
 	}
+	reg := &lit.Reg{}
 	env := exp.Builtins(layla.Specs(reg).AddMap(extlib.Std))
 	r, err := exp.NewProg(nil, reg, env).Run(x, exp.LitVal(&argmap))
 	if err != nil {
