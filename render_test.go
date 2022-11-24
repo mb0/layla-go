@@ -101,9 +101,8 @@ func read(name string) (*layla.Node, error) {
 		{"batch", lit.Str("AB19020501")},
 		{"ingreds", lit.Str("list of all the ingredients, like suger and spice and everthing nice.")},
 	}
-	reg := &lit.Reg{}
-	env := exp.Builtins(layla.Specs(reg).AddMap(extlib.Std))
-	r, err := exp.NewProg(nil, reg, env).Run(x, exp.LitVal(param))
+	env := exp.Builtins(layla.Specs(nil).AddMap(extlib.Std))
+	r, err := exp.NewProg(env).Run(x, exp.LitVal(param))
 	if err != nil {
 		return nil, err
 	}

@@ -84,7 +84,7 @@ func TestLayla(t *testing.T) {
 			`{kind:'text' w:176 h:40 font:{line:40} data:'Hello World'}` +
 			`{kind:'page'}{kind:'text' w:176 h:40 font:{line:40} data:'Hallo Welt'}`},
 	}
-	reg := &lit.Reg{}
+	reg := lit.NewRegs()
 	env := exp.Builtins(Specs(reg).AddMap(lib.Std))
 	for _, test := range tests {
 		n, err := Eval(nil, reg, env, strings.NewReader(test.raw), "")
@@ -100,7 +100,7 @@ func TestLayla(t *testing.T) {
 		}
 		var b strings.Builder
 		for _, d := range draw {
-			dl, err := reg.Proxy(d)
+			dl, err := lit.Proxy(reg, d)
 			if err != nil {
 				t.Errorf("could not proxy %v, error: %v", d, err)
 			}
@@ -131,7 +131,7 @@ func TestMeasure(t *testing.T) {
 		{"(text 'Hello World')", `{"w":89,"h":80}`, ``},
 		{"(text mar:[1 2 3 4] 'Hello')", `{"w":83,"h":46}`, `{"x":1,"y":2,"w":79,"h":40}`},
 	}
-	reg := &lit.Reg{}
+	reg := lit.NewRegs()
 	env := exp.Builtins(Specs(reg).AddMap(lib.Std))
 	for _, test := range tests {
 		n, err := Eval(nil, reg, env, strings.NewReader(test.raw), "")

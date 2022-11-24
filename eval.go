@@ -12,12 +12,12 @@ import (
 )
 
 // Eval parses and evaluates the label from reader r and returns a node or an error.
-func Eval(ctx context.Context, reg *lit.Reg, env exp.Env, rr io.Reader, name string) (*Node, error) {
+func Eval(ctx context.Context, reg *lit.Regs, env exp.Env, rr io.Reader, name string) (*Node, error) {
 	x, err := exp.Read(rr, name)
 	if err != nil {
 		return nil, err
 	}
-	r, err := exp.NewProg(ctx, reg, env).Run(x, nil)
+	r, err := exp.NewProg(env, reg, ctx).Run(x, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,10 @@ var listNodes = []string{"stage", "rect", "ellipse", "box", "vbox", "hbox", "tab
 	"page", "extra", "cover", "header", "footer"}
 var dataNodes = []string{"line", "text", "markup", "qrcode", "barcode"}
 
-func Specs(reg *lit.Reg) lib.Specs {
+func Specs(reg lit.Reg) lib.Specs {
+	if reg == nil {
+		reg = lit.GlobalRegs()
+	}
 	specs := make(lib.Specs, len(listNodes)+len(dataNodes))
 	for _, name := range listNodes {
 		s, err := ext.NodeSpecName(reg, name, &Node{Kind: name}, ext.Rules{Tail: ext.Rule{

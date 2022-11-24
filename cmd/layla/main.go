@@ -83,9 +83,8 @@ func main() {
 	if err != nil {
 		log.Fatal("parse tmpl: ", err)
 	}
-	reg := &lit.Reg{}
-	env := exp.Builtins(layla.Specs(reg).AddMap(extlib.Std))
-	r, err := exp.NewProg(nil, reg, env).Run(x, exp.LitVal(&argmap))
+	env := exp.Builtins(layla.Specs(nil).AddMap(extlib.Std))
+	r, err := exp.NewProg(env).Run(x, exp.LitVal(&argmap))
 	if err != nil {
 		log.Fatal("run tmpl: ", err)
 	}
