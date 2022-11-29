@@ -29,10 +29,8 @@ func Eval(ctx context.Context, reg *lit.Regs, env exp.Env, rr io.Reader, name st
 }
 
 func ValNode(v lit.Val) *Node {
-	if prx, ok := v.Value().(lit.Mut); ok {
-		if n, ok := prx.Ptr().(*Node); ok {
-			return n
-		}
+	if n, ok := v.Mut().Ptr().(*Node); ok {
+		return n
 	}
 	return nil
 }
