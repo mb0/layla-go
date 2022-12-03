@@ -21,7 +21,7 @@ func Eval(ctx context.Context, reg *lit.Regs, env exp.Env, rr io.Reader, name st
 	if err != nil {
 		return nil, err
 	}
-	n := ValNode(r.Val)
+	n := ValNode(r)
 	if n == nil {
 		return nil, fmt.Errorf("expected *layla.Node got %T", r)
 	}

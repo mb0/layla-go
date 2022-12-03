@@ -102,11 +102,11 @@ func read(name string) (*layla.Node, error) {
 		{"ingreds", lit.Str("list of all the ingredients, like suger and spice and everthing nice.")},
 	}
 	env := exp.Builtins(layla.Specs(nil).AddMap(extlib.Std))
-	r, err := exp.NewProg(env).Run(x, exp.LitVal(param))
+	r, err := exp.NewProg(env).Run(x, param)
 	if err != nil {
 		return nil, err
 	}
-	n := layla.ValNode(r.Val)
+	n := layla.ValNode(r)
 	if n == nil {
 		return nil, fmt.Errorf("expected *layla.Node got %T", r)
 	}

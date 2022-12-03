@@ -84,11 +84,11 @@ func main() {
 		log.Fatal("parse tmpl: ", err)
 	}
 	env := exp.Builtins(layla.Specs(nil).AddMap(extlib.Std))
-	r, err := exp.NewProg(env).Run(x, exp.LitVal(&argmap))
+	r, err := exp.NewProg(env).Run(x, &argmap)
 	if err != nil {
 		log.Fatal("run tmpl: ", err)
 	}
-	node := layla.ValNode(r.Val)
+	node := layla.ValNode(r)
 	if node == nil {
 		log.Fatal("exec tmpl: ", err)
 	}
