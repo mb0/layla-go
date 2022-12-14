@@ -64,7 +64,7 @@ func TestLayla(t *testing.T) {
 			`{kind:'text' y:40 w:100 h:40 font:{line:40} data:'b:'}` +
 			`{kind:'text' x:100 y:40 w:200 h:40 font:{line:40} data:'2'}` +
 			`{kind:'text' y:80 w:300 h:30 font:{line:40} data:'end'}`},
-		{`(vbox w:300 h:300 list:(list (text 'Hello') (text 'World')))`, "" +
+		{`(vbox w:300 h:300 list:([]+ (text 'Hello') (text 'World')))`, "" +
 			`{kind:'text' w:300 h:40 font:{line:40} data:'Hello'}` +
 			`{kind:'text' y:40 w:300 h:40 font:{line:40} data:'World'}`},
 		{`(page w:200 h:41 (text 'Page3'))`, "" +
