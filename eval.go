@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"reflect"
 
 	"xelf.org/xelf/exp"
 	"xelf.org/xelf/ext"
@@ -13,11 +14,23 @@ import (
 
 // Eval parses and evaluates the label from reader r and returns a node or an error.
 func Eval(ctx context.Context, reg *lit.Regs, env exp.Env, rr io.Reader, name string) (*Node, error) {
+	return EvalProg(exp.NewProg(env, reg, ctx), rr, name, nil)
+}
+
+// EvalProg parses and evaluates the label from reader using prog r and returns a node or an error.
+func EvalProg(prog *exp.Prog, rr io.Reader, name string, arg interface{}) (*Node, error) {
 	x, err := exp.Read(rr, name)
 	if err != nil {
 		return nil, err
 	}
-	r, err := exp.NewProg(env, reg, ctx).Run(x, nil)
+	var v lit.Val
+	if arg != nil {
+		v, err = prog.Reg.ProxyValue(reflect.ValueOf(arg))
+		if err != nil {
+			return nil, fmt.Errorf("proxy error: %v", err)
+		}
+	}
+	r, err := prog.Run(x, v)
 	if err != nil {
 		return nil, err
 	}
