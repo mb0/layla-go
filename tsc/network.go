@@ -1,8 +1,6 @@
 package tsc
 
 import (
-	"fmt"
-	"log"
 	"net"
 	"time"
 )
@@ -68,13 +66,15 @@ type NetDiscovery struct {
 }
 
 func NewNetDiscovery(timeout time.Duration) *NetDiscovery {
+	if timeout == 0 {
+		timeout = DefaultTimeout
+	}
 	return &NetDiscovery{Port: 22368, Bcast: net.IPv4bcast, Timeout: timeout}
 }
 
 func (d *NetDiscovery) Run(handler func(NetInfo) bool) error {
 	laddr := &net.UDPAddr{IP: net.IPv4zero, Port: d.Port}
 	raddr := &net.UDPAddr{IP: d.Bcast, Port: d.Port}
-	log.Printf("bcast to %s", raddr)
 	conn, err := net.ListenUDP("udp", laddr)
 	if err != nil {
 		return err
@@ -107,14 +107,10 @@ func (d *NetDiscovery) Run(handler func(NetInfo) bool) error {
 			}
 			return err
 		case nil:
-			if n < 58 {
-				if d.Log != nil {
-					d.Log(fmt.Errorf("short msg"))
-				}
+			if n <= 58 {
 				continue
 			}
 			info := parseNetInfo(msg)
-			log.Printf("received msg from %s", info.IP)
 			if info.IP == "0.0.0.0" {
 				continue
 			}

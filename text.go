@@ -100,10 +100,10 @@ func (l *Layouter) lineHeight(f *Font) (lh Dot, _ error) {
 	}
 	f.Height = ff.Metrics().Height
 
-	if f.Line <= 0 {
-		f.Line = 1.2
-	}
 	if f.Line < 8 {
+		if f.Line <= 0 {
+			f.Line = 1.2
+		}
 		f.Line = (f.Line * l.PtToDot(f.Height)).Floor()
 	}
 	return f.Line, nil

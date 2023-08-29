@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"image"
 	"image/png"
-	"log"
 	"math"
 	"strings"
 
@@ -72,11 +71,11 @@ func Render(b bfr.Writer, man *font.Manager, n *layla.Node) error {
 			} else {
 				hyp := font.Dot(math.Sqrt(float64(d.W*d.W + d.H*d.H)))
 				deg := math.Asin(float64(d.H/hyp)) * 180 / math.Pi
-				pos := layla.Pos{d.X + d.Border.W*.25, d.Y - d.Border.W*.5}
+				pos := layla.Pos{X: d.X + d.Border.W*.25, Y: d.Y - d.Border.W*.5}
 				if deg < 0 {
-					pos = layla.Pos{d.X - d.Border.W*.25, d.Y}
+					pos = layla.Pos{X: d.X - d.Border.W*.25, Y: d.Y}
 				}
-				writeBox(b, layla.Box{pos, layla.Dim{hyp.Round(), 0}}, 0)
+				writeBox(b, layla.Box{Pos: pos, Dim: layla.Dim{W: hyp.Round(), H: 0}}, 0)
 				fmt.Fprintf(b, "border-top:%gmm solid black;", d.Border.W/8)
 				fmt.Fprintf(b, "transform:rotate(%gdeg);", math.Round(deg*10)/10)
 				b.WriteString(`transform-origin:top left;`)
@@ -141,7 +140,6 @@ func writeBarcode(b bfr.Writer, d *layla.Node) error {
 	}
 	img, err = barcode.Scale(img, int(d.W), int(d.H))
 	if err != nil {
-		log.Printf("scale barcode %g %g", d.W, d.H)
 		return err
 	}
 	fmt.Fprintf(b, `<img style="width:%gmm; height:%gmm" src="`, d.W/8, d.H/8)
@@ -153,7 +151,7 @@ func writeBarcode(b bfr.Writer, d *layla.Node) error {
 	return nil
 }
 
-// writeDataURL writes the given img as monochrome gif data url to b
+// writeDataURL writes the given img as png data url to b
 func writeDataURL(b bfr.Writer, img image.Image) error {
 	b.WriteString("data:image/png;base64,")
 	enc := base64.NewEncoder(base64.RawStdEncoding, b)

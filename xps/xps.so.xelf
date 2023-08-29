@@ -1,0 +1,7 @@
+{name:'layla' caps:{
+	cmds:{
+		'':'Layla commands'
+		'tscscan':'scan for tsc printer'
+		'1bpphex':'convert image to hex'
+	}
+}}

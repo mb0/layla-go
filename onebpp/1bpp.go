@@ -2,6 +2,12 @@
 // The file format uses the 1bpp extension and has a 6 bytes header with the magic two bytes
 // 0x31 0x62 ('1b') and then width and height each uint16 in big-endian followed by
 // height*((width+pad)/8) bytes data, where pad is padding a row to full bytes (8-(width%8))%8.
+//
+// This code is not actively used or maintained.
+//
+// This code was written in anticipation of printing bitmap data with tsc printers. However, the
+// targeted printer did not support BITMAP, PUTBMP or PUTPCX commands. Therefor I had to use
+// the TTF renderer and a modified font file to print the logo.
 package onebpp
 
 import (

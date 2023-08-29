@@ -19,7 +19,7 @@ func Open(dev string) (*Conn, error) {
 }
 
 // Discover discovers and returns usb devices paths that pass a status check.
-// For now it only checks /dev/usb/libN on linux machines.
+// For now it only checks /dev/usb/lpN on linux machines.
 func DiscoverDev() (devs []string, err error) {
 	switch runtime.GOOS {
 	case "linux":
