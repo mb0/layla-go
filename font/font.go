@@ -3,9 +3,11 @@ package font
 import (
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
 )
 
 type Key struct {
@@ -14,7 +16,7 @@ type Key struct {
 }
 
 type Src struct {
-	*truetype.Font
+	Font interface{}
 	Path string
 	Name string
 }
@@ -24,7 +26,7 @@ type Manager struct {
 	dpi    int
 	subx   int
 	suby   int
-	ttfs   map[string]*Src
+	srcs   map[string]*Src
 	faces  map[Key]font.Face
 	err    error
 }
@@ -56,11 +58,14 @@ func (m *Manager) PtToDot(pt Pt) Dot  { return Dot(PtToF(pt)*25.4*8) / Dot(m.DPI
 func (m *Manager) Err() error           { return m.err }
 func (m *Manager) fail(err error) error { m.err = err; return err }
 
-func (m *Manager) RegisterTTF(name string, path string) *Manager {
+// Regster supports both truetype and opentype fonts.
+// TSC printers however only support truetype fonts. Opentype fonts can still be used
+// to generate pdf documents.
+func (m *Manager) Register(name string, path string) *Manager {
 	if m.err != nil {
 		return m
 	}
-	_, ok := m.ttfs[name]
+	_, ok := m.srcs[name]
 	if ok {
 		return m
 	}
@@ -69,20 +74,28 @@ func (m *Manager) RegisterTTF(name string, path string) *Manager {
 		m.fail(fmt.Errorf("reading file %q: %v", path, err))
 		return m
 	}
-	f, err := truetype.Parse(data)
+	var f interface{}
+	switch strings.ToLower(path[len(path)-4:]) {
+	case ".otf":
+		f, err = opentype.Parse(data)
+	case ".ttf":
+		f, err = truetype.Parse(data)
+	default:
+		err = fmt.Errorf("unknown font format")
+	}
 	if err != nil {
 		m.fail(fmt.Errorf("parse file %q: %v", path, err))
 		return m
 	}
-	if m.ttfs == nil {
-		m.ttfs = make(map[string]*Src)
+	if m.srcs == nil {
+		m.srcs = make(map[string]*Src)
 	}
-	m.ttfs[name] = &Src{f, path, name}
+	m.srcs[name] = &Src{f, path, name}
 	return m
 }
 
 func (m *Manager) Path(name string) (string, error) {
-	src, ok := m.ttfs[name]
+	src, ok := m.srcs[name]
 	if !ok {
 		return "", fmt.Errorf("unknown font %q", name)
 	}
@@ -98,17 +111,25 @@ func (m *Manager) Face(name string, size float64) (font.Face, error) {
 	if ok {
 		return f, nil
 	}
-	src, ok := m.ttfs[name]
+	src, ok := m.srcs[name]
 	if !ok {
 		return nil, fmt.Errorf("unknown font %q", name)
 	}
 	subx, suby := m.SubPixels()
-	f = truetype.NewFace(src.Font, &truetype.Options{
-		Size:       size,
-		DPI:        float64(m.DPI()),
-		SubPixelsX: subx,
-		SubPixelsY: suby,
-	})
+	switch fnt := src.Font.(type) {
+	case *truetype.Font:
+		f = truetype.NewFace(fnt, &truetype.Options{
+			Size:       size,
+			DPI:        float64(m.DPI()),
+			SubPixelsX: subx,
+			SubPixelsY: suby,
+		})
+	case *opentype.Font:
+		f, _ = opentype.NewFace(fnt, &opentype.FaceOptions{
+			Size: size,
+			DPI:  float64(m.DPI()),
+		})
+	}
 	if m.faces == nil {
 		m.faces = make(map[Key]font.Face)
 	}

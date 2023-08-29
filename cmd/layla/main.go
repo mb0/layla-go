@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -23,7 +24,7 @@ import (
 )
 
 var rend = flag.String("rend", "tspl", "renderer")
-var fnt = flag.String("font", "", "specific font")
+var fnt = flag.String("font", ".", "specific font file or directory (tspl only supports ttf)")
 var dpi = flag.Int("dpi", 0, "resolution in dots per inch")
 var prnt = flag.Int("print", 0, "number of labels to print")
 var dev = flag.String("dev", "", "device string either dev path or net addr")
@@ -43,14 +44,13 @@ func main() {
 		dp = 203
 	}
 	man := font.NewManager(dp, 2, 2)
-	if *fnt != "" {
-		man.RegisterTTF(filepath.Base(*fnt), *fnt)
-	} else {
-		man.RegisterTTF("GoReg.ttf", "testdata/font/Go-Regular.ttf")
-		man.RegisterTTF("GoBold.ttf", "testdata/font/Go-Bold.ttf")
+	err := registerFonts(man, *fnt)
+	if err != nil {
+		log.Println("read font: ", err)
 	}
-	if err := man.Err(); err != nil {
-		log.Fatal("read font: ", err)
+	err = registerFonts(man, "./testdata/font")
+	if err != nil {
+		log.Println("read test font: ", err)
 	}
 	var argmap lit.Dict
 	argmap.SetKey("now", lit.Time(time.Now()))
@@ -149,4 +149,41 @@ func main() {
 		log.Fatalf("expect format argument to be either of tspl, html or pdf got %s", *rend)
 	}
 	fmt.Print(buf.String())
+}
+
+func registerFonts(man *font.Manager, path string) error {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return fmt.Errorf("could not stat font path: %v", err)
+	}
+	var files []string
+	if fi.IsDir() {
+		fis, err := os.ReadDir(path)
+		if err != nil {
+			return fmt.Errorf("could not read fonts: %v", err)
+		}
+		for _, fi := range fis {
+			name := fi.Name()
+			if isFontPath(name) {
+				files = append(files, filepath.Join(path, name))
+			}
+		}
+	} else if isFontPath(path) {
+		files = append(files, path)
+	}
+	for _, file := range files {
+		// log.Printf("register font %s", file)
+		man.Register(filepath.Base(file), file)
+	}
+	return man.Err()
+}
+
+func isFontPath(path string) bool {
+	if len(path) > 4 {
+		switch strings.ToLower(path[len(path)-4:]) {
+		case ".ttf", ".otf":
+			return true
+		}
+	}
+	return false
 }

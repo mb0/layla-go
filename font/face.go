@@ -10,7 +10,7 @@ import (
 // Dot is the measurement used by layla and is defined as 1/8 mm or 1/203 inch.
 // We use the 200 dpi dot as default, because it easier to work with than mm or 300 dpi dots.
 // During layout we round to half dots so we do not lose information relevant for 300 dpi renders.
-// Otherwise we try to round positions down and dimensions up, as not to sqeeze and wrap text.
+// Otherwise we try to round positions down and dimensions up, as not to squeeze and wrap text.
 type Dot float64
 
 // Mm converts dot into mm and returns it.
@@ -66,7 +66,7 @@ func (f *Face) Text(text string, last rune) (res Dot, _ rune) {
 
 func (f *Face) Rune(r, last rune) Dot {
 	var res Pt
-	if last != -1 && last != '\n' {
+	if last != -1 && last != '\n' && last != ' ' {
 		res += f.Kern(last, r)
 	}
 	a, ok := f.GlyphAdvance(r)

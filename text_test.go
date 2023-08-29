@@ -8,7 +8,7 @@ import (
 )
 
 func TestLayout(t *testing.T) {
-	m := font.NewManager(72, 2, 4).RegisterTTF("", "testdata/font/Go-Regular.ttf")
+	m := font.NewManager(72, 2, 4).Register("", "testdata/font/Go-Regular.ttf")
 	tests := []struct {
 		text  string
 		width int

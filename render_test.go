@@ -21,8 +21,8 @@ import (
 
 func man() *font.Manager {
 	m := font.NewManager(72, 2, 4).
-		RegisterTTF("GoReg.ttf", "testdata/font/Go-Regular.ttf").
-		RegisterTTF("GoBold.ttf", "testdata/font/Go-Bold.ttf")
+		Register("GoReg.ttf", "testdata/font/Go-Regular.ttf").
+		Register("GoBold.ttf", "testdata/font/Go-Bold.ttf")
 	if err := m.Err(); err != nil {
 		log.Fatal(err)
 	}
