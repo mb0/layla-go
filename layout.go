@@ -78,12 +78,11 @@ func (l *Layouter) layout(n *Node, a Box, stack []*Node) (_ Box, err error) {
 	nb.H = clamp(ab.H, nb.H)
 	n.Calc = nb
 	switch n.Kind {
-	case "text":
-		err = l.lineLayout(n, stack)
-	case "markup":
+	case "text", "markup":
 		err = l.lineLayout(n, stack)
 	case "line":
 		n.Calc.W = n.W
+		n.Calc.H = n.H
 	case "qrcode":
 		if nb.H == 0 || nb.W < nb.H {
 			n.Calc.H = nb.W

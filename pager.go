@@ -3,6 +3,8 @@ package layla
 import (
 	"fmt"
 	"strings"
+
+	"xelf.org/layla/font"
 )
 
 func Page(n *Node) ([]*Node, error) {
@@ -50,6 +52,8 @@ func collectCopy(n *Node) *Node {
 	d := &Node{Kind: n.Kind, Box: n.Calc, Border: n.Border}
 	d.Pad = n.Pad
 	switch n.Kind {
+	case "line":
+		d.Cols = append(([]font.Dot)(nil), n.Cols...)
 	case "text":
 		d.Font = n.Font
 		d.Data = n.Data
