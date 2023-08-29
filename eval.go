@@ -75,7 +75,7 @@ func Specs(reg lit.Reg) lib.Specs {
 	}
 	for _, name := range dataNodes {
 		s, err := ext.NodeSpecName(reg, name, &Node{Kind: name}, ext.Rules{Tail: ext.Rule{
-			Prepper: ext.DynPrepper,
+			Prepper: ext.CatPrepper,
 			Setter: func(p *exp.Prog, n ext.Node, _ string, v lit.Val) error {
 				return n.SetKey("data", v)
 			},
