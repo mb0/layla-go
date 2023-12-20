@@ -1,5 +1,6 @@
 package tsc
 
+const CmdModel = "~!T"
 const CmdStatus = "\x1B!?" // 1
 
 const (

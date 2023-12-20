@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net"
+	"os"
 	"strings"
 	"time"
 )
@@ -68,7 +68,17 @@ type Conn struct {
 	Timeout time.Duration
 }
 
-// Status requests a printer status message and returns it or an error.
+// Model requests and returns the printer model name or an error.
+func (p *Conn) Model() (string, error) {
+	err := p.Send(CmdModel)
+	if err != nil {
+		return "", err
+	}
+	res, err := p.Recv()
+	return string(res), err
+}
+
+// Status requests and returns the printer status or an error.
 func (p *Conn) Status() (Status, error) {
 	err := p.Send(CmdStatus)
 	if err != nil {
@@ -120,7 +130,7 @@ func (p *Conn) RecvN(readSize int) ([]byte, error) {
 		n, err = p.Conn.Read(buf[nn:])
 	}
 	p.Conn.SetReadDeadline(time.Time{})
-	if operr, ok := err.(*net.OpError); ok && operr.Timeout() && nn > 0 {
+	if os.IsTimeout(err) && nn > 0 {
 		err = nil
 	}
 	return buf[:nn], err
